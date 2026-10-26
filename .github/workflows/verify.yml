@@ -1,5 +1,6 @@
 name: Verify integration workspace
 on:
+  workflow_dispatch:
   push:
     branches: [main, 'david/**']
   pull_request:

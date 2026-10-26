@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "sourceRepository": "Printerrenta/PSI-BE",
-  "sourceCommit": "23bef02e133ca822a7d9b64eda18ae6886a1edc4",
+  "sourceCommit": "f88545ca603a944b49bb26a280fe9f2148118f04",
   "sourceBranch": "main",
   "history": "Independent public snapshots; no private Git history",
   "files": [
@@ -23,7 +23,7 @@
     },
     {
       "path": ".github/workflows/verify.yml",
-      "sha256": "8564ed90fa196ee2523770d2a1a7e3b08531cd6b4f312c596d912245130a1c0f"
+      "sha256": "d1260c0c2854ff9c3aa9ff7eccd9f833a55567911a21b5253e5ad375e528fff0"
     },
     {
       "path": ".gitignore",
