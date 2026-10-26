@@ -1,0 +1,673 @@
+{
+  "info": {
+    "name": "PSI-BE Auth",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Run 1\u20136 in order. Postman keeps Neon session cookies. Set email and password locally; do not export real credentials. Default URL is the local auth test server. For Cloud Run use the GCP proxy or enable X-Serverless-Authorization with a Google ID token. Logout ends the managed session; an issued JWT remains valid for up to 15 minutes."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:18081"
+    },
+    {
+      "key": "authUrl",
+      "value": ""
+    },
+    {
+      "key": "email",
+      "value": ""
+    },
+    {
+      "key": "password",
+      "value": ""
+    },
+    {
+      "key": "name",
+      "value": "Test user"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "gcpIdToken",
+      "value": ""
+    },
+    {
+      "key": "userSubject",
+      "value": ""
+    },
+    {
+      "key": "notificationId",
+      "value": ""
+    },
+    {
+      "key": "contractId",
+      "value": ""
+    },
+    {
+      "key": "repairRequestId",
+      "value": ""
+    },
+    {
+      "key": "repairVersion",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Auth configuration",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/auth/config",
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "pm.collectionVariables.set('authUrl',pm.response.json().authUrl);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Register (CUSTOMER)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Origin",
+            "value": "http://localhost:3000"
+          }
+        ],
+        "url": "{{authUrl}}/sign-up/email",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"{{name}}\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "3. Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Origin",
+            "value": "http://localhost:3000"
+          }
+        ],
+        "url": "{{authUrl}}/sign-in/email",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "4. Restore managed session",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Origin",
+            "value": "http://localhost:3000"
+          }
+        ],
+        "url": "{{authUrl}}/get-session",
+        "auth": {
+          "type": "noauth"
+        }
+      }
+    },
+    {
+      "name": "5. Get JWT",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Origin",
+            "value": "http://localhost:3000"
+          }
+        ],
+        "url": "{{authUrl}}/token",
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "pm.collectionVariables.set('accessToken',pm.response.json().token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. My identity and role",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/me",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{accessToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "7. My rental requests (staff: all)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true
+          }
+        ],
+        "url": "{{baseUrl}}/api/rental-requests",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{accessToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "8. My contracts (staff: all)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true
+          }
+        ],
+        "url": "{{baseUrl}}/api/contracts",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{accessToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "9. Printers (EMPLOYEE or ADMIN)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true
+          }
+        ],
+        "url": "{{baseUrl}}/api/printers",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{accessToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "10. Users (ADMIN only)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/users",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{accessToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "11. Set role (ADMIN only)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/users/{{userSubject}}/role",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{accessToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"role\": \"EMPLOYEE\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "12. Logout managed session",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Origin",
+            "value": "http://localhost:3000"
+          }
+        ],
+        "url": "{{authUrl}}/sign-out",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.unset('accessToken');"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications (Pub/Sub inbox)",
+      "item": [
+        {
+          "name": "List own notifications (staff sees all)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/notifications?page=0&size=20"
+          }
+        },
+        {
+          "name": "Mark notification as read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/notifications/{{notificationId}}/read"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Repair requests",
+      "item": [
+        {
+          "name": "Create repair request",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/repair-requests",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Serverless-Authorization",
+                "value": "Bearer {{gcpIdToken}}",
+                "disabled": true,
+                "description": "Enable for direct Cloud Run access; leave disabled when using the authenticated local proxy."
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contractId\": \"{{contractId}}\",\n  \"description\": \"Paper feed rollers are broken\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && !Array.isArray(pm.response.json().content)) {",
+                  "  const data = pm.response.json();",
+                  "  if (data.id) pm.collectionVariables.set(\"repairRequestId\", data.id);",
+                  "  if (data.version !== undefined) pm.collectionVariables.set(\"repairVersion\", data.version);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List repair requests",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/repair-requests?page=0&size=20",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Serverless-Authorization",
+                "value": "Bearer {{gcpIdToken}}",
+                "disabled": true,
+                "description": "Enable for direct Cloud Run access; leave disabled when using the authenticated local proxy."
+              }
+            ]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && !Array.isArray(pm.response.json().content)) {",
+                  "  const data = pm.response.json();",
+                  "  if (data.id) pm.collectionVariables.set(\"repairRequestId\", data.id);",
+                  "  if (data.version !== undefined) pm.collectionVariables.set(\"repairVersion\", data.version);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get repair request",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/repair-requests/{{repairRequestId}}",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Serverless-Authorization",
+                "value": "Bearer {{gcpIdToken}}",
+                "disabled": true,
+                "description": "Enable for direct Cloud Run access; leave disabled when using the authenticated local proxy."
+              }
+            ]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && !Array.isArray(pm.response.json().content)) {",
+                  "  const data = pm.response.json();",
+                  "  if (data.id) pm.collectionVariables.set(\"repairRequestId\", data.id);",
+                  "  if (data.version !== undefined) pm.collectionVariables.set(\"repairVersion\", data.version);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Start repair (employee/admin)",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/repair-requests/{{repairRequestId}}/status",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Serverless-Authorization",
+                "value": "Bearer {{gcpIdToken}}",
+                "disabled": true,
+                "description": "Enable for direct Cloud Run access; leave disabled when using the authenticated local proxy."
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_PROGRESS\",\n  \"version\": {{repairVersion}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && !Array.isArray(pm.response.json().content)) {",
+                  "  const data = pm.response.json();",
+                  "  if (data.id) pm.collectionVariables.set(\"repairRequestId\", data.id);",
+                  "  if (data.version !== undefined) pm.collectionVariables.set(\"repairVersion\", data.version);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Complete repair (employee/admin)",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/repair-requests/{{repairRequestId}}/status",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Serverless-Authorization",
+                "value": "Bearer {{gcpIdToken}}",
+                "disabled": true,
+                "description": "Enable for direct Cloud Run access; leave disabled when using the authenticated local proxy."
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COMPLETED\",\n  \"version\": {{repairVersion}},\n  \"resolution\": \"Replaced feed rollers\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && !Array.isArray(pm.response.json().content)) {",
+                  "  const data = pm.response.json();",
+                  "  if (data.id) pm.collectionVariables.set(\"repairRequestId\", data.id);",
+                  "  if (data.version !== undefined) pm.collectionVariables.set(\"repairVersion\", data.version);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cancel own OPEN repair",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/repair-requests/{{repairRequestId}}/status",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "X-Serverless-Authorization",
+                "value": "Bearer {{gcpIdToken}}",
+                "disabled": true,
+                "description": "Enable for direct Cloud Run access; leave disabled when using the authenticated local proxy."
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CANCELLED\",\n  \"version\": {{repairVersion}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && !Array.isArray(pm.response.json().content)) {",
+                  "  const data = pm.response.json();",
+                  "  if (data.id) pm.collectionVariables.set(\"repairRequestId\", data.id);",
+                  "  if (data.version !== undefined) pm.collectionVariables.set(\"repairVersion\", data.version);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

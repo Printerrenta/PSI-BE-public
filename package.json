@@ -1,0 +1,26 @@
+{
+  "name": "psi-be",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/app.mjs build",
+    "test": "node scripts/app.mjs test",
+    "test:integration": "node scripts/app.mjs integration",
+    "test:auth": "node scripts/auth-smoke.mjs",
+    "test:neon": "node scripts/neon-smoke.mjs",
+    "auth:bootstrap": "node scripts/bootstrap-admin.mjs",
+    "services:clone": "node scripts/clone-services.mjs",
+    "test:accounting": "node scripts/accounting-smoke.mjs",
+    "db:provision": "node scripts/provision-service-databases.mjs",
+    "db:migrate": "node scripts/migrate-service-databases.mjs",
+    "test:databases": "node --test scripts/tests/service-databases.test.mjs",
+    "db:migrate:local": "node scripts/migrate-local-databases.mjs"
+  },
+  "dependencies": {
+    "@neon/config": "^1.9.3",
+    "@neon/env": "^1.6.4"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-s3": "^3.1154.0",
+    "pg": "^8.23.1"
+  }
+}

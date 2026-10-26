@@ -1,0 +1,37 @@
+{
+  "api-gateway": {
+    "repository": "https://github.com/Printerrenta/psi-api-gateway-public.git",
+    "commit": "eca01532e1dded55b8fac828c575e8983230ab6e",
+    "directory": "../psi-api-gateway"
+  },
+  "identity-service": {
+    "repository": "https://github.com/Printerrenta/psi-identity-service-public.git",
+    "commit": "84e1a7748c3a4846d0c2dc5563f67bf1788b62aa",
+    "directory": "../psi-identity-service"
+  },
+  "rental-service": {
+    "repository": "https://github.com/Printerrenta/psi-rental-service-public.git",
+    "commit": "fb5dee434559de9bb3796ea127c60fe725a2b7c4",
+    "directory": "../psi-rental-service"
+  },
+  "document-service": {
+    "repository": "https://github.com/Printerrenta/psi-document-service-public.git",
+    "commit": "87cec894d3ff9b49baba3d4411669e2c58246e87",
+    "directory": "../psi-document-service"
+  },
+  "notification-service": {
+    "repository": "https://github.com/Printerrenta/psi-notification-service-public.git",
+    "commit": "4136c7e66d852bc57a545893a5fb696b5c0953f6",
+    "directory": "../psi-notification-service"
+  },
+  "metering-service": {
+    "repository": "https://github.com/Printerrenta/psi-metering-service-public.git",
+    "commit": "1a1f65f2eb8798804db8553316589bbe1424d6f0",
+    "directory": "../psi-metering-service"
+  },
+  "billing-service": {
+    "repository": "https://github.com/Printerrenta/psi-billing-service-public.git",
+    "commit": "9dce283002fb3a3f31a85492cdbf5469beec4c30",
+    "directory": "../psi-billing-service"
+  }
+}

@@ -1,0 +1,390 @@
+{
+  "info": {
+    "name": "PSI-BE metering, billing and manual payments",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8080"
+    },
+    {
+      "key": "contractId",
+      "value": ""
+    },
+    {
+      "key": "printerId",
+      "value": ""
+    },
+    {
+      "key": "ownerSubject",
+      "value": ""
+    },
+    {
+      "key": "jwt",
+      "value": ""
+    },
+    {
+      "key": "gcpIdToken",
+      "value": ""
+    },
+    {
+      "key": "streamVersion",
+      "value": "1"
+    },
+    {
+      "key": "period",
+      "value": "2026-10"
+    },
+    {
+      "key": "readingDate",
+      "value": "2026-10-31"
+    },
+    {
+      "key": "readingId",
+      "value": ""
+    },
+    {
+      "key": "paymentId",
+      "value": ""
+    },
+    {
+      "key": "invoiceId",
+      "value": ""
+    },
+    {
+      "key": "accountVersion",
+      "value": "0"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Initialize four-counter accounting (staff)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true,
+            "description": "Enable for direct private Cloud Run; Bearer jwt remains application auth."
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/contracts/{{contractId}}/accounting",
+        "description": "Use a fresh idempotency UUID per operation; retain it for retries. Use current version from GET. Never put tokens in committed environment files.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"a3Capable\": true,\n  \"baseline\": [\n    0,\n    0,\n    0,\n    0\n  ],\n  \"vatPercent\": 21,\n  \"paymentTermDays\": 14\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Get authoritative contract terms",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true,
+            "description": "Enable for direct private Cloud Run; Bearer jwt remains application auth."
+          }
+        ],
+        "url": "{{baseUrl}}/api/contracts/{{contractId}}/accounting",
+        "description": "Use a fresh idempotency UUID per operation; retain it for retries. Use current version from GET. Never put tokens in committed environment files."
+      }
+    },
+    {
+      "name": "Set device usage bounds (staff)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true,
+            "description": "Enable for direct private Cloud Run; Bearer jwt remains application auth."
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/metering/policies/DEVICE",
+        "description": "Use a fresh idempotency UUID per operation; retain it for retries. Use current version from GET. Never put tokens in committed environment files.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"key\": \"{{printerId}}\",\n  \"minimumPerDay\": 0,\n  \"maximumPerDay\": 1000,\n  \"version\": 0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Get readings and current stream version",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true,
+            "description": "Enable for direct private Cloud Run; Bearer jwt remains application auth."
+          }
+        ],
+        "url": "{{baseUrl}}/api/metering/contracts/{{contractId}}",
+        "description": "Use a fresh idempotency UUID per operation; retain it for retries. Use current version from GET. Never put tokens in committed environment files."
+      }
+    },
+    {
+      "name": "Submit month-end counters",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true,
+            "description": "Enable for direct private Cloud Run; Bearer jwt remains application auth."
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/metering/contracts/{{contractId}}/readings",
+        "description": "Use a fresh idempotency UUID per operation; retain it for retries. Use current version from GET. Never put tokens in committed environment files.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestKey\": \"REPLACE_WITH_STABLE_UUID\",\n  \"version\": {{streamVersion}},\n  \"asOf\": \"{{readingDate}}\",\n  \"counters\": [\n    100,\n    20,\n    10,\n    5\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Staff review queue",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true,
+            "description": "Enable for direct private Cloud Run; Bearer jwt remains application auth."
+          }
+        ],
+        "url": "{{baseUrl}}/api/metering/review-queue",
+        "description": "Use a fresh idempotency UUID per operation; retain it for retries. Use current version from GET. Never put tokens in committed environment files."
+      }
+    },
+    {
+      "name": "Approve suspicious reading (staff)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true,
+            "description": "Enable for direct private Cloud Run; Bearer jwt remains application auth."
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/metering/readings/{{readingId}}/review",
+        "description": "Use a fresh idempotency UUID per operation; retain it for retries. Use current version from GET. Never put tokens in committed environment files.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"version\": {{streamVersion}},\n  \"approve\": true,\n  \"reason\": \"Checked the device counters\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Issue closed monthly statement (staff)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true,
+            "description": "Enable for direct private Cloud Run; Bearer jwt remains application auth."
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/billing/contracts/{{contractId}}/invoices",
+        "description": "Use a fresh idempotency UUID per operation; retain it for retries. Use current version from GET. Never put tokens in committed environment files.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestKey\": \"REPLACE_WITH_STABLE_UUID\",\n  \"period\": \"{{period}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "List own statements",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true,
+            "description": "Enable for direct private Cloud Run; Bearer jwt remains application auth."
+          }
+        ],
+        "url": "{{baseUrl}}/api/billing/invoices",
+        "description": "Use a fresh idempotency UUID per operation; retain it for retries. Use current version from GET. Never put tokens in committed environment files."
+      }
+    },
+    {
+      "name": "Get calculation and payment state",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true,
+            "description": "Enable for direct private Cloud Run; Bearer jwt remains application auth."
+          }
+        ],
+        "url": "{{baseUrl}}/api/billing/invoices/{{invoiceId}}",
+        "description": "Use a fresh idempotency UUID per operation; retain it for retries. Use current version from GET. Never put tokens in committed environment files."
+      }
+    },
+    {
+      "name": "Register received payment (staff)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true,
+            "description": "Enable for direct private Cloud Run; Bearer jwt remains application auth."
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/billing/payments",
+        "description": "Use a fresh idempotency UUID per operation; retain it for retries. Use current version from GET. Never put tokens in committed environment files.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": \"REPLACE_WITH_STABLE_UUID\",\n  \"ownerSubject\": \"{{ownerSubject}}\",\n  \"amount\": 100,\n  \"receivedOn\": \"2026-10-22\",\n  \"reference\": \"Bank transfer reference\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Get own balance, debt and advance",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true,
+            "description": "Enable for direct private Cloud Run; Bearer jwt remains application auth."
+          }
+        ],
+        "url": "{{baseUrl}}/api/billing/account",
+        "description": "Use a fresh idempotency UUID per operation; retain it for retries. Use current version from GET. Never put tokens in committed environment files."
+      }
+    },
+    {
+      "name": "Get own payment history",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true,
+            "description": "Enable for direct private Cloud Run; Bearer jwt remains application auth."
+          }
+        ],
+        "url": "{{baseUrl}}/api/billing/payments",
+        "description": "Use a fresh idempotency UUID per operation; retain it for retries. Use current version from GET. Never put tokens in committed environment files."
+      }
+    },
+    {
+      "name": "Get own correction history",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true,
+            "description": "Enable for direct private Cloud Run; Bearer jwt remains application auth."
+          }
+        ],
+        "url": "{{baseUrl}}/api/billing/adjustments",
+        "description": "Use a fresh idempotency UUID per operation; retain it for retries. Use current version from GET. Never put tokens in committed environment files."
+      }
+    },
+    {
+      "name": "Get allocation audit trail",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Serverless-Authorization",
+            "value": "Bearer {{gcpIdToken}}",
+            "disabled": true,
+            "description": "Enable for direct private Cloud Run; Bearer jwt remains application auth."
+          }
+        ],
+        "url": "{{baseUrl}}/api/billing/allocations",
+        "description": "Use a fresh idempotency UUID per operation; retain it for retries. Use current version from GET. Never put tokens in committed environment files."
+      }
+    }
+  ]
+}

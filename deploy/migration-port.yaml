@@ -1,0 +1,5 @@
+# Temporary loopback-only access for an operator migrating an existing local volume.
+services:
+  postgres:
+    ports:
+      - "127.0.0.1:${MIGRATION_DB_PORT:-15432}:5432"

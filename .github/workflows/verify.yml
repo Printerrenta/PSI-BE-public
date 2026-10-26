@@ -1,0 +1,51 @@
+name: Verify integration workspace
+on:
+  push:
+    branches: [main, 'david/**']
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: chmod +x mvnw
+      - run: npm ci
+      - name: Validate integration entrypoints and Compose
+        env:
+          NEON_AUTH_BASE_URL: https://auth.test/auth
+          NEON_AUTH_JWKS_URL: https://auth.test/jwks
+          AWS_ACCESS_KEY_ID: local-placeholder
+          AWS_SECRET_ACCESS_KEY: local-placeholder
+          AWS_ENDPOINT_URL_S3: https://storage.test
+        run: |
+          node --check scripts/accounting-smoke.mjs
+          node --check scripts/provision-service-databases.mjs
+          node --check scripts/migrate-service-databases.mjs
+          node --check scripts/lib/service-databases.mjs
+          bash -n deploy/init-pubsub.sh
+          docker compose config --quiet
+      - name: Install matching PostgreSQL client tools
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl --fail --silent --show-error -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo 'deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main' | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-17
+      - name: Separate databases and data migration
+        env:
+          PG_BIN: /usr/lib/postgresql/17/bin
+        run: npm run test:databases
+      - run: npm run build
+      - name: PostgreSQL integration and migration tests
+        run: ./mvnw -B -ntp -Pintegration test-compile failsafe:integration-test failsafe:verify

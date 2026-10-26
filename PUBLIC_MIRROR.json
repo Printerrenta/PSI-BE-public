@@ -1,0 +1,249 @@
+{
+  "schemaVersion": 1,
+  "sourceRepository": "Printerrenta/PSI-BE",
+  "sourceCommit": "23bef02e133ca822a7d9b64eda18ae6886a1edc4",
+  "sourceBranch": "main",
+  "history": "Independent public snapshots; no private Git history",
+  "files": [
+    {
+      "path": ".dockerignore",
+      "sha256": "27f8eb8e845cec69706c9322b65654b2b1d0c8a226bfa711f99b8b7df24c217d"
+    },
+    {
+      "path": ".env.example",
+      "sha256": "dc746b1be4046cc4f1f71cd82927ee91aac86aa75a113772ff77d5f089593843"
+    },
+    {
+      "path": ".gitattributes",
+      "sha256": "70ea0dcbe0e3db14ce46b4d8f938b5697a632b55d6f0fcbb3664a7f7396b6ec4"
+    },
+    {
+      "path": ".github/workflows/public-safety.yml",
+      "sha256": "b2496e36f4d1ef71234ffe5b349a9c449a8f45c575de594b23a41ddb3badebf7"
+    },
+    {
+      "path": ".github/workflows/verify.yml",
+      "sha256": "8564ed90fa196ee2523770d2a1a7e3b08531cd6b4f312c596d912245130a1c0f"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "d1982c33f2569ecce13df2be7755938cf07ca2b4ba385409d1aeda80da9794c4"
+    },
+    {
+      "path": ".mvn/wrapper/maven-wrapper.properties",
+      "sha256": "8f2a4438810348270d9d98f8d6d530541ddb7271e373db207e8ac381e0e35b62"
+    },
+    {
+      "path": "README.md",
+      "sha256": "5dd1f799ffde7fa895376c0b5f95669bb265bce85913e29f503682d59cd2c046"
+    },
+    {
+      "path": "compose.yaml",
+      "sha256": "f585f0a9d7c26d092fc97be720ecde12c2b58d9b515c3e1fa8b5ba8d8e467e65"
+    },
+    {
+      "path": "deploy/init-pubsub.sh",
+      "sha256": "c006652ec170f002273e9c8c6165444018904373b285af333b30f2bac0b56501"
+    },
+    {
+      "path": "deploy/migration-port.yaml",
+      "sha256": "41c5960e18dae24c0a8ac8bd830a9fff9c0d6eec084ee9e458ea60ee1e0dca86"
+    },
+    {
+      "path": "deploy/postgres-init.sql",
+      "sha256": "76b0b292632b470c75cfa2402a1446f3b123a7b0393889bbfd96624f9b48dd48"
+    },
+    {
+      "path": "docs/accounting-api.md",
+      "sha256": "90779615352f9eba3566258163cedcecc1af822ddd0330987948865ab1459223"
+    },
+    {
+      "path": "docs/architecture-decisions.md",
+      "sha256": "a9d745e73c6d1e88461503afbebd1f631c65d5b8fa1a06b41c0430eea3ae4e23"
+    },
+    {
+      "path": "docs/metering-billing-requirements.md",
+      "sha256": "6f57f6632ac2187799a2dc5271d41d5ad54767a2f8ea8b3bb55027223e40a5ed"
+    },
+    {
+      "path": "mvnw",
+      "sha256": "cae96cef89ebea3531221f4ae17c23cf8edf67d00eae8306d4186ae1bbed4d02"
+    },
+    {
+      "path": "mvnw.cmd",
+      "sha256": "4a361e1374a3e5ad6d03e18e9adc0cf181ac5058ac6203b76f0ba3b456b56481"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "61482aacacda606c1b324346bcfc7a15fc3f0c24e3ce97c5429c1436ab337c17"
+    },
+    {
+      "path": "package.json",
+      "sha256": "6513bbd041fe4fd312357b538b6cad8f5721f9be539baac50486041f18f35592"
+    },
+    {
+      "path": "platform-migrations/pom.xml",
+      "sha256": "d9fe1d2417c9dde24984f9e0edcf6732cb2f4580fc50fba9e6e7d71ede7a64e4"
+    },
+    {
+      "path": "platform-migrations/src/main/java/lt/printerrental/migration/PlatformMigration.java",
+      "sha256": "21fc61e584d81097462e6569dc4416f408d742943ebee66a542e00e55f95febc"
+    },
+    {
+      "path": "platform-migrations/src/main/resources/db/platform/V1__separate_service_ownership.sql",
+      "sha256": "3a24594a4f2a0469af6cbea1dd168b646801159f4c2de0e4dcbb1846541cb379"
+    },
+    {
+      "path": "platform-migrations/src/test/java/lt/printerrental/migration/PlatformMigrationIT.java",
+      "sha256": "0b7e1ef30c26ef32faeba860f93185ac2b1f34120e634f52d8d5ad4b573f5ba0"
+    },
+    {
+      "path": "platform-migrations/src/test/resources/legacy/V1__create_rental_requests.sql",
+      "sha256": "5869e17d18d6cd822c585e411d7525bed6409c5d648ffbd404c87ec44c699b2f"
+    },
+    {
+      "path": "platform-migrations/src/test/resources/legacy/V2__printer_rental_requirements.sql",
+      "sha256": "6d58819c8e9ca14a940c22f05e918ca26fd7d623bcf4077acf05ba6896da2391"
+    },
+    {
+      "path": "platform-migrations/src/test/resources/legacy/V3__printer_catalog.sql",
+      "sha256": "cb9d206713f58ff29025cf6da5c580352e9dfc6959cb72bd251e0ced8c78213b"
+    },
+    {
+      "path": "platform-migrations/src/test/resources/legacy/V4__rental_contracts.sql",
+      "sha256": "af562e480165efa442f87be8ac26dc46348945cc2fd378890787188ec52d9f93"
+    },
+    {
+      "path": "platform-migrations/src/test/resources/legacy/V5__contract_activation.sql",
+      "sha256": "297e978c9f99499dda6066fec07bb294cce12e02f3334f6681ce945ea0b16514"
+    },
+    {
+      "path": "platform-migrations/src/test/resources/legacy/V6__contract_completion.sql",
+      "sha256": "ea75f54e281a6488846a87117c731f632527703f73878cf5e8191165c079cb00"
+    },
+    {
+      "path": "platform-migrations/src/test/resources/legacy/V7__contract_attachments.sql",
+      "sha256": "f3c7873570f5a65f3c5de9d2d530b4d55c639385e80a468bbb6597ba887909d8"
+    },
+    {
+      "path": "platform-migrations/src/test/resources/legacy/V8__users_and_request_ownership.sql",
+      "sha256": "04d11c7cfbb3c3c2fddcbfbb139f70c63cf9273755f094cd9e3a6ffd1d7af2fa"
+    },
+    {
+      "path": "pom.xml",
+      "sha256": "0f16825d198ec4aeb0015507699e1cc0c340ecda9aa12c7985fa04c238a94d3c"
+    },
+    {
+      "path": "postman/PSI-BE-accounting.postman_collection.json",
+      "sha256": "eab333ec083627bd7605be247cb4adf27c1957fce828436c83c4279651e93461"
+    },
+    {
+      "path": "postman/PSI-BE-auth.postman_collection.json",
+      "sha256": "3ecb1ffca0eabecdd0befda221b3f782707e804bdca3e727fcf14b77b91d7f8c"
+    },
+    {
+      "path": "scripts/accounting-smoke.mjs",
+      "sha256": "f04dd6288fc9ded5935ff1540c415848615f30b6c27d6f212c445f58ba6b132d"
+    },
+    {
+      "path": "scripts/app.mjs",
+      "sha256": "5b6936a5ba1e290095efa33801650e00b95523689c5c336efec13383a779e27a"
+    },
+    {
+      "path": "scripts/auth-smoke.mjs",
+      "sha256": "273ef1377b0bae6c45b1b25bc961ac87a07d797cdaaa7ca1ade076f07ae0188a"
+    },
+    {
+      "path": "scripts/bootstrap-admin.mjs",
+      "sha256": "37b6021cafe6d4248ff94a19f4a936ce58d859b400f5d0421cfe8d57bf8eae8f"
+    },
+    {
+      "path": "scripts/clone-services.mjs",
+      "sha256": "a07a615bf02bd198220fc44c7737d14278b2fe83b2231cff9ef6f169d6831064"
+    },
+    {
+      "path": "scripts/lib/service-databases.mjs",
+      "sha256": "109bd0625b2a61063ff86f33d8b0f4e8aff5cb8dc57240af530c8bec54ca35a8"
+    },
+    {
+      "path": "scripts/migrate-local-databases.mjs",
+      "sha256": "dba110feeb2b660624b3382750b2ecd31028d6cf4e068515be1e1127ff1788ad"
+    },
+    {
+      "path": "scripts/migrate-service-databases.mjs",
+      "sha256": "f7a35d4e145bf79cb49539680fbf753dd6aa53d65a09d7084c6be04d6de8ed61"
+    },
+    {
+      "path": "scripts/neon-smoke.mjs",
+      "sha256": "9880f44f2a4ff9331c32176fba847221484500a3c9f512206b691de59fe05575"
+    },
+    {
+      "path": "scripts/provision-service-databases.mjs",
+      "sha256": "29870984458e85e89bd886fda29527205a30f7b953b529741a50df42be9eb489"
+    },
+    {
+      "path": "scripts/tests/fixtures/shared-database.sql",
+      "sha256": "b66170baa044ce101d02b3b33a7aeafd980f2516b6e9bf1c0a946238ee134d0e"
+    },
+    {
+      "path": "scripts/tests/service-databases.test.mjs",
+      "sha256": "6af01787dfde803a074ed1ba4d1bde9d37befe8d6b0f7a080681e4a6a6073c4c"
+    },
+    {
+      "path": "services.json",
+      "sha256": "7bb47f3b9df24f193de13dfd9e5d86c0f9993e7d36ba8ecd81d5e245d1e0516c"
+    }
+  ],
+  "byteIdenticalSourceFiles": [
+    ".dockerignore",
+    ".env.example",
+    ".gitattributes",
+    ".gitignore",
+    ".mvn/wrapper/maven-wrapper.properties",
+    "compose.yaml",
+    "deploy/init-pubsub.sh",
+    "deploy/migration-port.yaml",
+    "deploy/postgres-init.sql",
+    "docs/architecture-decisions.md",
+    "docs/metering-billing-requirements.md",
+    "mvnw",
+    "mvnw.cmd",
+    "package-lock.json",
+    "package.json",
+    "platform-migrations/pom.xml",
+    "platform-migrations/src/main/java/lt/printerrental/migration/PlatformMigration.java",
+    "platform-migrations/src/main/resources/db/platform/V1__separate_service_ownership.sql",
+    "platform-migrations/src/test/java/lt/printerrental/migration/PlatformMigrationIT.java",
+    "platform-migrations/src/test/resources/legacy/V1__create_rental_requests.sql",
+    "platform-migrations/src/test/resources/legacy/V2__printer_rental_requirements.sql",
+    "platform-migrations/src/test/resources/legacy/V3__printer_catalog.sql",
+    "platform-migrations/src/test/resources/legacy/V4__rental_contracts.sql",
+    "platform-migrations/src/test/resources/legacy/V5__contract_activation.sql",
+    "platform-migrations/src/test/resources/legacy/V6__contract_completion.sql",
+    "platform-migrations/src/test/resources/legacy/V7__contract_attachments.sql",
+    "platform-migrations/src/test/resources/legacy/V8__users_and_request_ownership.sql",
+    "pom.xml",
+    "postman/PSI-BE-accounting.postman_collection.json",
+    "postman/PSI-BE-auth.postman_collection.json",
+    "scripts/accounting-smoke.mjs",
+    "scripts/app.mjs",
+    "scripts/auth-smoke.mjs",
+    "scripts/bootstrap-admin.mjs",
+    "scripts/clone-services.mjs",
+    "scripts/lib/service-databases.mjs",
+    "scripts/migrate-local-databases.mjs",
+    "scripts/migrate-service-databases.mjs",
+    "scripts/neon-smoke.mjs",
+    "scripts/provision-service-databases.mjs",
+    "scripts/tests/fixtures/shared-database.sql",
+    "scripts/tests/service-databases.test.mjs"
+  ],
+  "executableFiles": [],
+  "omittedCategories": [
+    "production deployment settings",
+    "private release evidence",
+    "credentials",
+    "private Git history",
+    "publisher credentials and workflow"
+  ]
+}

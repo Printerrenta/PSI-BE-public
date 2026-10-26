@@ -1,0 +1,44 @@
+-- Development only: six independent databases on one PostgreSQL server.
+-- initdb runs this only for a NEW volume; migrate existing data explicitly.
+CREATE ROLE psi_identity LOGIN PASSWORD 'identity_local' NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;
+CREATE DATABASE psi_identity OWNER psi_identity TEMPLATE template0;
+REVOKE ALL ON DATABASE psi_identity FROM PUBLIC;
+CREATE ROLE psi_rental LOGIN PASSWORD 'rental_local' NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;
+CREATE DATABASE psi_rental OWNER psi_rental TEMPLATE template0;
+REVOKE ALL ON DATABASE psi_rental FROM PUBLIC;
+CREATE ROLE psi_documents LOGIN PASSWORD 'documents_local' NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;
+CREATE DATABASE psi_documents OWNER psi_documents TEMPLATE template0;
+REVOKE ALL ON DATABASE psi_documents FROM PUBLIC;
+CREATE ROLE psi_notifications LOGIN PASSWORD 'notifications_local' NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;
+CREATE DATABASE psi_notifications OWNER psi_notifications TEMPLATE template0;
+REVOKE ALL ON DATABASE psi_notifications FROM PUBLIC;
+CREATE ROLE psi_metering LOGIN PASSWORD 'metering_local' NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;
+CREATE DATABASE psi_metering OWNER psi_metering TEMPLATE template0;
+REVOKE ALL ON DATABASE psi_metering FROM PUBLIC;
+CREATE ROLE psi_billing LOGIN PASSWORD 'billing_local' NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;
+CREATE DATABASE psi_billing OWNER psi_billing TEMPLATE template0;
+REVOKE ALL ON DATABASE psi_billing FROM PUBLIC;
+\connect psi_identity
+REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+CREATE SCHEMA identity AUTHORIZATION psi_identity;
+REVOKE ALL ON SCHEMA identity FROM PUBLIC;
+\connect psi_rental
+REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+CREATE SCHEMA rental AUTHORIZATION psi_rental;
+REVOKE ALL ON SCHEMA rental FROM PUBLIC;
+\connect psi_documents
+REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+CREATE SCHEMA documents AUTHORIZATION psi_documents;
+REVOKE ALL ON SCHEMA documents FROM PUBLIC;
+\connect psi_notifications
+REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+CREATE SCHEMA notifications AUTHORIZATION psi_notifications;
+REVOKE ALL ON SCHEMA notifications FROM PUBLIC;
+\connect psi_metering
+REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+CREATE SCHEMA metering AUTHORIZATION psi_metering;
+REVOKE ALL ON SCHEMA metering FROM PUBLIC;
+\connect psi_billing
+REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+CREATE SCHEMA billing AUTHORIZATION psi_billing;
+REVOKE ALL ON SCHEMA billing FROM PUBLIC;

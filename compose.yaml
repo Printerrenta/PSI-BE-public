@@ -1,0 +1,123 @@
+name: psi-be-microservices
+x-service: &service
+  restart: unless-stopped
+  mem_limit: 384m
+  environment: &common-env
+    NEON_AUTH_BASE_URL: ${NEON_AUTH_BASE_URL:?Set Neon Auth URL in .env.local}
+    NEON_AUTH_JWKS_URL: ${NEON_AUTH_JWKS_URL:?Set Neon JWKS URL in .env.local}
+    JAVA_TOOL_OPTIONS: -Xmx192m -XX:ReservedCodeCacheSize=32m -XX:+ExitOnOutOfMemoryError
+    IDENTITY_SERVICE_URL: http://identity-service:8080
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: rental
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_local}
+    volumes:
+      - micro_postgres:/var/lib/postgresql/data
+      - ./deploy/postgres-init.sql:/docker-entrypoint-initdb.d/01-services.sql:ro
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U postgres -d rental]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  pubsub:
+    image: gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators
+    command: gcloud beta emulators pubsub start --project=printer-rental-local --host-port=0.0.0.0:8085 --quiet
+    mem_limit: 512m
+  pubsub-init:
+    image: curlimages/curl:8.16.0
+    entrypoint: [/bin/sh, /init-pubsub.sh]
+    volumes: [./deploy/init-pubsub.sh:/init-pubsub.sh:ro]
+    depends_on: [pubsub]
+  identity-service:
+    <<: *service
+    build: {context: ../psi-identity-service}
+    environment:
+      <<: *common-env
+      IDENTITY_SERVICE_URL: ''
+      DB_URL: jdbc:postgresql://postgres:5432/psi_identity?currentSchema=identity
+      DB_USERNAME: psi_identity
+      DB_PASSWORD: identity_local
+    depends_on: {postgres: {condition: service_healthy}}
+  rental-service:
+    <<: *service
+    build: {context: ../psi-rental-service}
+    environment:
+      <<: *common-env
+      DB_URL: jdbc:postgresql://postgres:5432/psi_rental?currentSchema=rental
+      DB_USERNAME: psi_rental
+      DB_PASSWORD: rental_local
+      PUBSUB_EMULATOR_HOST: pubsub:8085
+      PUBSUB_PROJECT: printer-rental-local
+      INTERNAL_AUTH_MODE: emulator
+    depends_on: {postgres: {condition: service_healthy}, pubsub-init: {condition: service_completed_successfully}}
+  document-service:
+    <<: *service
+    build: {context: ../psi-document-service}
+    environment:
+      <<: *common-env
+      DB_URL: jdbc:postgresql://postgres:5432/psi_documents?currentSchema=documents
+      DB_USERNAME: psi_documents
+      DB_PASSWORD: documents_local
+      RENTAL_SERVICE_URL: http://rental-service:8080
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:?Set storage credentials}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:?Set storage credentials}
+      AWS_ENDPOINT_URL_S3: ${AWS_ENDPOINT_URL_S3:?Set storage endpoint}
+      AWS_REGION: ${AWS_REGION:-eu-central-1}
+    depends_on: {postgres: {condition: service_healthy}}
+  notification-service:
+    <<: *service
+    build: {context: ../psi-notification-service}
+    environment:
+      <<: *common-env
+      DB_URL: jdbc:postgresql://postgres:5432/psi_notifications?currentSchema=notifications
+      DB_USERNAME: psi_notifications
+      DB_PASSWORD: notifications_local
+      INTERNAL_AUTH_MODE: emulator
+      PUBSUB_EMULATOR_HOST: pubsub:8085
+      PUBSUB_SUBSCRIPTIONS: projects/printer-rental-local/subscriptions/rental-notifications-v1,projects/printer-rental-local/subscriptions/metering-notifications-v1,projects/printer-rental-local/subscriptions/billing-notifications-v1
+    depends_on: {postgres: {condition: service_healthy}}
+  metering-service:
+    <<: *service
+    build: {context: ../psi-metering-service}
+    environment:
+      <<: *common-env
+      DB_URL: jdbc:postgresql://postgres:5432/psi_metering?currentSchema=metering
+      DB_USERNAME: psi_metering
+      DB_PASSWORD: metering_local
+      RENTAL_SERVICE_URL: http://rental-service:8080
+      PUBSUB_EMULATOR_HOST: pubsub:8085
+      PUBSUB_PROJECT: printer-rental-local
+      PUBSUB_SUBSCRIPTIONS: projects/printer-rental-local/subscriptions/rental-metering-v1
+      INTERNAL_AUTH_MODE: emulator
+    depends_on: {postgres: {condition: service_healthy}, pubsub-init: {condition: service_completed_successfully}}
+  billing-service:
+    <<: *service
+    build: {context: ../psi-billing-service}
+    environment:
+      <<: *common-env
+      DB_URL: jdbc:postgresql://postgres:5432/psi_billing?currentSchema=billing
+      DB_USERNAME: psi_billing
+      DB_PASSWORD: billing_local
+      RENTAL_SERVICE_URL: http://rental-service:8080
+      PUBSUB_EMULATOR_HOST: pubsub:8085
+      PUBSUB_PROJECT: printer-rental-local
+      PUBSUB_SUBSCRIPTIONS: projects/printer-rental-local/subscriptions/rental-billing-v1,projects/printer-rental-local/subscriptions/metering-billing-v1
+      INTERNAL_AUTH_MODE: emulator
+    depends_on: {postgres: {condition: service_healthy}, pubsub-init: {condition: service_completed_successfully}}
+  api-gateway:
+    <<: *service
+    build: {context: ../psi-api-gateway}
+    environment:
+      <<: *common-env
+      RENTAL_SERVICE_URL: http://rental-service:8080
+      DOCUMENT_SERVICE_URL: http://document-service:8080
+      NOTIFICATION_SERVICE_URL: http://notification-service:8080
+      METERING_SERVICE_URL: http://metering-service:8080
+      BILLING_SERVICE_URL: http://billing-service:8080
+    ports: ["127.0.0.1:${API_PORT:-8080}:8080"]
+    depends_on: [identity-service, rental-service, document-service, notification-service, metering-service, billing-service]
+volumes:
+  micro_postgres:
