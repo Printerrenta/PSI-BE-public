@@ -1,15 +1,18 @@
 # Printer rental administration - public source
 
-A Java / Spring Boot backend for printer rental: contracts, four-category meter
-readings, usage-based monthly charges, payments, repairs and customer records.
+A printer rental system with independently delivered Java / Spring Boot services
+and a React / TypeScript customer and staff frontend. It covers contracts,
+four-category meter readings, usage-based charges, payments and repairs.
 
 ## Business workflow
 
 1. Staff configure a printer contract, initial counters, monthly fee, page tariffs,
    VAT rate and payment deadline.
 2. Customers submit readings. Normal usage is accepted; anomalies wait for review.
-3. Billing saves the calculation breakdown, estimates missing usage under the
-   agreed rules and corrects later bills when actual readings arrive.
+3. Billing saves the calculation breakdown and charges accepted actual usage.
+   Without a new reading, new monthly invoices include only the fixed rental fee;
+   later readings account for previously unbilled usage. Historical calculations
+   retain their original policy and corrections remain auditable.
 4. Payments cover the oldest debts; excess remains as an advance.
 5. Customers view their own records and request repairs for active contracts.
 
@@ -17,7 +20,7 @@ readings, usage-based monthly charges, payments, repairs and customer records.
 
 ```mermaid
 flowchart TB
-  Client[Postman or future frontend] --> Gateway[API gateway]
+  Client[React customer and staff frontend / API clients] --> Gateway[API gateway]
   Gateway --> Identity[Identity and roles]
   Gateway --> Rental[Printers, contracts and repairs]
   Gateway --> Documents[Private documents]
@@ -49,9 +52,11 @@ data ownership and asynchronous recovery. A modular monolith would normally be
 simpler for a small company. Extra services introduce operational cost and
 eventual consistency; their count is an educational choice.
 
-The prototype exposes backend APIs and Postman examples. A customer web frontend
-and bank/payment-provider integration are future work. The hosted environment is
-private and is not a public demo endpoint.
+The React 19 / TypeScript frontend is implemented: customer self-service, staff
+workflows, four-counter readings, review, billing and device/model usage policies.
+Its source is currently maintained separately from these public backend mirrors.
+Bank/payment-provider integration remains future work. Hosted business data
+requires authenticated access; there is no anonymous public application demo.
 
 ## Public repositories
 
