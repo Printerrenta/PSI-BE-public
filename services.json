@@ -11,7 +11,7 @@
   },
   "rental-service": {
     "repository": "https://github.com/Printerrenta/psi-rental-service-public.git",
-    "commit": "e27345516726a23c0180cab1742acbc27f79e740",
+    "commit": "8c7876b5a1c64cce2ce5f84a8dba7adde0a27e62",
     "directory": "../psi-rental-service"
   },
   "document-service": {

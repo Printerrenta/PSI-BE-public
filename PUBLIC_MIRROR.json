@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "sourceRepository": "Printerrenta/PSI-BE",
-  "sourceCommit": "ff681656db5e6d01dc7d9edd1c743234170739d7",
+  "sourceCommit": "f78a168fd50bdf30d1d0f8518b6fc0cc437dda7f",
   "sourceBranch": "main",
   "history": "Independent public snapshots; no private Git history",
   "files": [
@@ -191,7 +191,7 @@
     },
     {
       "path": "services.json",
-      "sha256": "db26f0245c7a534e12295303f519d4de1e873430f0af399546c6dfda5a143bc6"
+      "sha256": "55e8e2399a50c3f1e8391796418d1f1cfac352b6ae2a9476e9455de3c474d108"
     }
   ],
   "byteIdenticalSourceFiles": [
