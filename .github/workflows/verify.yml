@@ -30,10 +30,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: local-placeholder
           AWS_ENDPOINT_URL_S3: https://storage.test
         run: |
-          node --check scripts/accounting-smoke.mjs
-          node --check scripts/provision-service-databases.mjs
-          node --check scripts/migrate-service-databases.mjs
-          node --check scripts/lib/service-databases.mjs
+          find scripts -name '*.mjs' -print0 | sort -z | xargs -0 -n 1 node --check
           bash -n deploy/init-pubsub.sh
           docker compose config --quiet
       - name: Install matching PostgreSQL client tools

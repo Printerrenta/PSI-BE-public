@@ -11,8 +11,25 @@ public final class PlatformMigration {
     if (!"true".equals(System.getenv("CONFIRM_LEGACY_WRITES_STOPPED")))
       throw new IllegalStateException(
           "Set CONFIRM_LEGACY_WRITES_STOPPED=true after stopping legacy writes");
-    var uri = URI.create(System.getenv("DATABASE_URL_UNPOOLED"));
-    var credentials = uri.getRawUserInfo().split(":", 2);
+    var rawDatabaseUrl = System.getenv("DATABASE_URL_UNPOOLED");
+    if (rawDatabaseUrl == null || rawDatabaseUrl.isBlank())
+      throw new IllegalArgumentException(
+          "DATABASE_URL_UNPOOLED must be set to a direct PostgreSQL URL with credentials");
+    var uri = URI.create(rawDatabaseUrl.trim());
+    var rawUserInfo = uri.getRawUserInfo();
+    if (rawUserInfo == null || rawUserInfo.isBlank())
+      throw new IllegalArgumentException(
+          "DATABASE_URL_UNPOOLED must include username and password credentials");
+    var credentials = rawUserInfo.split(":", 2);
+    if (credentials.length < 2 || credentials[0].isBlank())
+      throw new IllegalArgumentException(
+          "DATABASE_URL_UNPOOLED must include both username and password in user:password format");
+    if (uri.getHost() == null
+        || uri.getHost().isBlank()
+        || uri.getRawPath() == null
+        || uri.getRawPath().isBlank())
+      throw new IllegalArgumentException(
+          "DATABASE_URL_UNPOOLED must include a valid host and database path");
     var url =
         "jdbc:postgresql://"
             + uri.getHost()

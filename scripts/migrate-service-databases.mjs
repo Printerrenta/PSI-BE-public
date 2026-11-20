@@ -8,12 +8,17 @@ import {services,identifier,databaseName,connected,connectionUrl,requireDirect,p
 
 function pgTool(tool,url,args) {
   const u=new URL(url), executable=process.env.PG_BIN?join(process.env.PG_BIN,tool+(process.platform==='win32'?'.exe':'')):tool;
+  const password=u.password?decodeURIComponent(u.password):'';
   // Secrets belong in the child environment, never command arguments or logs.
   return new Promise((done,reject)=>{
-    const child=spawn(executable,args,{env:{...process.env,PGHOST:u.hostname,PGPORT:u.port||'5432',PGDATABASE:decodeURIComponent(u.pathname.slice(1)),PGUSER:decodeURIComponent(u.username),PGPASSWORD:decodeURIComponent(u.password),PGSSLMODE:u.searchParams.get('sslmode')||'verify-full'},stdio:['ignore','ignore','pipe']});
+    const child=spawn(executable,args,{env:{...process.env,PGHOST:u.hostname,PGPORT:u.port||'5432',PGDATABASE:decodeURIComponent(u.pathname.slice(1)),PGUSER:decodeURIComponent(u.username),PGPASSWORD:password,PGSSLMODE:u.searchParams.get('sslmode')||'verify-full'},stdio:['ignore','ignore','pipe']});
     let error=''; child.stderr.on('data',chunk=>error+=chunk);
     child.on('error',()=>reject(new Error(tool+' could not start; install PostgreSQL clients or set PG_BIN')));
-    child.on('exit',code=>code===0?done():reject(new Error(tool+' failed; no cutover was performed ('+code+'). '+error.replaceAll(decodeURIComponent(u.password),'[redacted]').slice(-2000))));
+    child.on('exit',code=>{
+      if (code===0) return done();
+      const sanitized=password?error.replaceAll(password,'[redacted]'):error;
+      reject(new Error(tool+' failed; no cutover was performed ('+code+'). '+sanitized.slice(-2000)));
+    });
   });
 }
 

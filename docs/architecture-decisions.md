@@ -60,8 +60,10 @@ This change does not publish repositories or certify historical secrecy.
 
 ## Current scope
 
-The prototype exposes backend APIs and Postman examples. It has no customer web
-frontend, bank integration or statutory invoice certification. Notifications are
-application records and broker events; do not infer a production email provider.
-The agreed billing rules are in metering-billing-requirements.md. A successful
-unit test run is not proof of a deployed system.
+The prototype exposes backend APIs, Postman examples and the `psi-frontend`
+React 19 / TypeScript web portal. Bank/payment-provider integration and
+statutory invoice certification are not implemented and remain future work.
+Notifications are application records and broker events; do not infer a
+production email provider. The agreed billing rules are in
+metering-billing-requirements.md. A successful unit test run is not proof of a
+deployed system.

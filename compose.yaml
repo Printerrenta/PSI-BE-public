@@ -49,6 +49,7 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/psi_rental?currentSchema=rental
       DB_USERNAME: psi_rental
       DB_PASSWORD: rental_local
+      METERING_SERVICE_URL: http://metering-service:8080
       PUBSUB_EMULATOR_HOST: pubsub:8085
       PUBSUB_PROJECT: printer-rental-local
       INTERNAL_AUTH_MODE: emulator
@@ -78,7 +79,7 @@ services:
       INTERNAL_AUTH_MODE: emulator
       PUBSUB_EMULATOR_HOST: pubsub:8085
       PUBSUB_SUBSCRIPTIONS: projects/printer-rental-local/subscriptions/rental-notifications-v1,projects/printer-rental-local/subscriptions/metering-notifications-v1,projects/printer-rental-local/subscriptions/billing-notifications-v1
-    depends_on: {postgres: {condition: service_healthy}}
+    depends_on: {postgres: {condition: service_healthy}, pubsub-init: {condition: service_completed_successfully}}
   metering-service:
     <<: *service
     build: {context: ../psi-metering-service}

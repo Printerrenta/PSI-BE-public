@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "sourceRepository": "Printerrenta/PSI-BE",
-  "sourceCommit": "98a864a2365b3082d9d856ef17a2afefbbd0b137",
+  "sourceCommit": "618db7af0f41000ff860844526d9c68b0317a23b",
   "sourceBranch": "main",
   "history": "Independent public snapshots; no private Git history",
   "files": [
@@ -23,7 +23,7 @@
     },
     {
       "path": ".github/workflows/verify.yml",
-      "sha256": "d1260c0c2854ff9c3aa9ff7eccd9f833a55567911a21b5253e5ad375e528fff0"
+      "sha256": "01a1e331bc81a9824d3fe9dac47c46241db653bc7e4b57d0f27b0a1f069b0bc5"
     },
     {
       "path": ".gitignore",
@@ -39,7 +39,7 @@
     },
     {
       "path": "compose.yaml",
-      "sha256": "f585f0a9d7c26d092fc97be720ecde12c2b58d9b515c3e1fa8b5ba8d8e467e65"
+      "sha256": "48fa4107b8d7a2ca73dbacd33cbe25129e42e67876d25ec6bfe2060fff0e1a82"
     },
     {
       "path": "deploy/init-pubsub.sh",
@@ -59,7 +59,7 @@
     },
     {
       "path": "docs/architecture-decisions.md",
-      "sha256": "a9d745e73c6d1e88461503afbebd1f631c65d5b8fa1a06b41c0430eea3ae4e23"
+      "sha256": "c07868c901d2ac86e3032d2603c149f64faa004b1f8ff9e714db794b709c4fc0"
     },
     {
       "path": "docs/metering-billing-requirements.md",
@@ -87,7 +87,7 @@
     },
     {
       "path": "platform-migrations/src/main/java/lt/printerrental/migration/PlatformMigration.java",
-      "sha256": "21fc61e584d81097462e6569dc4416f408d742943ebee66a542e00e55f95febc"
+      "sha256": "c718f0ee60f82a6c8b4252123f8fe0624b42e615acf72f3d7afa996edcb66e09"
     },
     {
       "path": "platform-migrations/src/main/resources/db/platform/V1__separate_service_ownership.sql",
@@ -151,7 +151,7 @@
     },
     {
       "path": "scripts/auth-smoke.mjs",
-      "sha256": "273ef1377b0bae6c45b1b25bc961ac87a07d797cdaaa7ca1ade076f07ae0188a"
+      "sha256": "891128b4a7a7e8f48257e8f265c6aed35809b9bd804338d62676c62be585a5c1"
     },
     {
       "path": "scripts/bootstrap-admin.mjs",
@@ -159,7 +159,7 @@
     },
     {
       "path": "scripts/clone-services.mjs",
-      "sha256": "a07a615bf02bd198220fc44c7737d14278b2fe83b2231cff9ef6f169d6831064"
+      "sha256": "2e235fa66ec7cc2d07986159f3850df4d65f4fd3d8a1ab8bd69334109636a718"
     },
     {
       "path": "scripts/lib/service-databases.mjs",
@@ -171,7 +171,7 @@
     },
     {
       "path": "scripts/migrate-service-databases.mjs",
-      "sha256": "f7a35d4e145bf79cb49539680fbf753dd6aa53d65a09d7084c6be04d6de8ed61"
+      "sha256": "ef5e0726f9c112628f6e413d83916d3c0f6823875925941c13025b8a2b51162d"
     },
     {
       "path": "scripts/neon-smoke.mjs",
@@ -191,7 +191,7 @@
     },
     {
       "path": "services.json",
-      "sha256": "7bb47f3b9df24f193de13dfd9e5d86c0f9993e7d36ba8ecd81d5e245d1e0516c"
+      "sha256": "22bf82dc778d2f22060ee36f4df649933943c25eacefa568c3c3c06ba027f86f"
     }
   ],
   "byteIdenticalSourceFiles": [

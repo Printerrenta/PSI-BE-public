@@ -20,6 +20,7 @@ const credentials=JSON.parse(readFileSync(process.env.SERVICE_CREDENTIALS_FILE||
 const serviceClients=Object.fromEntries(['identity','rental','documents','notifications'].map(name=>{const target=new URL(credentials[name].DATABASE_URL_UNPOOLED);assert.equal(target.pathname,'/psi_'+name,'Separate service DB required');assert.equal(target.hostname,url.hostname,'Test credential host mismatch');return [name,new pg.Client({connectionString:target.toString()})];}));
 const s3=new S3Client({forcePathStyle:true});
 const users=[];const ids={};let objectKey;let checks=0;
+const connectedClients=new Set();
 async function authCall(path,body,cookie='',expected=200){
  let response;
  for(let attempt=0;attempt<5;attempt++){
@@ -58,8 +59,9 @@ async function register(label){
  return user;
 }
 try {
- await db.connect();
- await Promise.all(Object.values(serviceClients).map(client=>client.connect()));
+ const connectResults=await Promise.allSettled([db,...Object.values(serviceClients)].map(async client=>{await client.connect();connectedClients.add(client);}));
+ const firstConnectError=connectResults.find(result=>result.status==='rejected');
+ if(firstConnectError)throw firstConnectError.reason;
  await api('/api/rental-requests',null,{status:401});
  await api('/api/rental-requests','invalid',{status:401});
  const [alice,bob,employee,admin]=await (async()=>{const result=[];for(const role of ['alice','bob','employee','admin']) result.push(await register(role));return result;})();
@@ -155,15 +157,20 @@ try {
  console.log(`PASS Logout: managed session ended, cannot mint new JWT; existing JWT expires within 15 minutes (${checks} API checks total)`);
 } finally {
  if(objectKey)await s3.send(new DeleteObjectCommand({Bucket:process.env.STORAGE_BUCKET||'assets',Key:objectKey}));
- if(ids.contract){await serviceClients.rental.query('DELETE FROM rental.repair_requests WHERE contract_id=$1',[ids.contract]);await serviceClients.documents.query('DELETE FROM documents.contract_attachments WHERE contract_id=$1',[ids.contract]);await serviceClients.rental.query('DELETE FROM rental.rental_contracts WHERE id=$1',[ids.contract]);}
- if(ids.request)await serviceClients.rental.query('DELETE FROM rental.rental_requests WHERE id=$1',[ids.request]);
- if(ids.printer)await serviceClients.rental.query('DELETE FROM rental.printers WHERE id=$1',[ids.printer]);
- for(const user of users){
-  await serviceClients.notifications.query('DELETE FROM notifications.notifications WHERE owner_subject=$1',[user.id]);
-  await serviceClients.rental.query("DELETE FROM rental.outbox_events WHERE payload->>'ownerSubject'=$1",[user.id]);
-  await serviceClients.identity.query('DELETE FROM identity.app_users WHERE subject=$1',[user.id]);
-  // Auth owns this schema; delete only identities made by this isolated test.
-  await db.query('DELETE FROM neon_auth.user WHERE id=$1 AND email=$2',[user.id,user.email]);
+ if(ids.contract){
+  if(connectedClients.has(serviceClients.rental))await serviceClients.rental.query('DELETE FROM rental.repair_requests WHERE contract_id=$1',[ids.contract]);
+  if(connectedClients.has(serviceClients.documents))await serviceClients.documents.query('DELETE FROM documents.contract_attachments WHERE contract_id=$1',[ids.contract]);
+  if(connectedClients.has(serviceClients.rental))await serviceClients.rental.query('DELETE FROM rental.rental_contracts WHERE id=$1',[ids.contract]);
  }
- await Promise.all([db.end(),...Object.values(serviceClients).map(client=>client.end())]);s3.destroy();console.log('CLEANUP: synthetic auth users, rental rows and object removed');
+ if(ids.request&&connectedClients.has(serviceClients.rental))await serviceClients.rental.query('DELETE FROM rental.rental_requests WHERE id=$1',[ids.request]);
+ if(ids.printer&&connectedClients.has(serviceClients.rental))await serviceClients.rental.query('DELETE FROM rental.printers WHERE id=$1',[ids.printer]);
+ for(const user of users){
+  if(connectedClients.has(serviceClients.notifications))await serviceClients.notifications.query('DELETE FROM notifications.notifications WHERE owner_subject=$1',[user.id]);
+  if(connectedClients.has(serviceClients.rental))await serviceClients.rental.query("DELETE FROM rental.outbox_events WHERE payload->>'ownerSubject'=$1",[user.id]);
+  if(connectedClients.has(serviceClients.identity))await serviceClients.identity.query('DELETE FROM identity.app_users WHERE subject=$1',[user.id]);
+  // Auth owns this schema; delete only identities made by this isolated test.
+  if(connectedClients.has(db))await db.query('DELETE FROM neon_auth.user WHERE id=$1 AND email=$2',[user.id,user.email]);
+ }
+ await Promise.allSettled([...connectedClients].map(client=>client.end()));s3.destroy();
+ if(connectedClients.size>0)console.log('CLEANUP: synthetic auth users, rental rows and object removed');
 }
